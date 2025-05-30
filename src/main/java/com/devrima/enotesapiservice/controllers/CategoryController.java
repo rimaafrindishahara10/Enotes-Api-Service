@@ -1,5 +1,7 @@
 package com.devrima.enotesapiservice.controllers;
 
+import com.devrima.enotesapiservice.dto.ActiveCategory;
+import com.devrima.enotesapiservice.dto.CategoryDto;
 import com.devrima.enotesapiservice.models.Category;
 import com.devrima.enotesapiservice.services.impl.CategoryServiceImpl;
 import org.springframework.http.HttpStatus;
@@ -22,8 +24,8 @@ public class CategoryController {
 
     //Post-Mapping
     @PostMapping("/save-category")
-    public ResponseEntity<?> saveCategory(@RequestBody Category category){
-        Boolean saveCategory = categoryService.saveCategory ( category );
+    public ResponseEntity<?> saveCategory(@RequestBody CategoryDto categoryDto){
+        Boolean saveCategory = categoryService.saveCategory ( categoryDto );
         if(saveCategory){
             return new ResponseEntity<> ( "Category Created Successfully", HttpStatus.CREATED );
         }else {
@@ -35,11 +37,21 @@ public class CategoryController {
     //Get-All-Category
     @GetMapping()
     public ResponseEntity<?> getAllCategory(){
-        List<Category> allCategory = categoryService.getAllCategory ();
+        List<CategoryDto> allCategory = categoryService.getAllCategory ();
         if(CollectionUtils.isEmpty ( allCategory )){
            return ResponseEntity.noContent ().build ();
         }else {
             return new ResponseEntity<> ( allCategory,HttpStatus.OK );
+        }
+
+    }
+    @GetMapping("/active")
+    public ResponseEntity<?> getAllActiveCategory(){
+        List<ActiveCategory> allActiveCategory = categoryService.getALlActiveCategory ();
+        if(CollectionUtils.isEmpty ( allActiveCategory )){
+            return ResponseEntity.noContent ().build ();
+        }else {
+            return new ResponseEntity<> ( allActiveCategory,HttpStatus.OK );
         }
 
     }
