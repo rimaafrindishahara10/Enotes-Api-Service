@@ -9,5 +9,8 @@ import java.util.List;
 
 @Repository
 public interface CategoryRepo extends JpaRepository<Category,Integer> {
-    public List<Category> findByIsActiveTrue();
+    public List<Category> findByIsActiveTrueAndIsDeletedFalse();
+    Category findByIdAndIsDeletedFalse(Integer id);
+
+    List<Category> findAllByIsDeletedFalse();
 }

@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class ActiveCategory {
 
+    private Integer id;
     private String name;
     private String description;
     private Boolean isActive;
