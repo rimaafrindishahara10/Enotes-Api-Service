@@ -9,8 +9,8 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
+import java.util.Date;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -26,23 +26,36 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public Boolean saveCategory(CategoryDto categoryDto) {
-//        category.setIsDeleted ( false );
-//        category.setCreatedBy ( 1 );
-//        category.setCreatedOn ( new Date ());
-
-//        Category category = new Category ();
-//        category.setName ( categoryDto.getName () );
-//        category.setDescription ( categoryDto.getDescription () );
-//        category.setIsActive ( categoryDto.getIsActive () );
-//
 
         Category category = mapper.map ( categoryDto, Category.class );
+        if (ObjectUtils.isEmpty ( category.getId () )){
+            category.setIsDeleted ( false );
+            category.setCreatedBy ( 1 );
+            category.setCreatedOn ( new Date () );
+
+        }else {
+            updateCategory(category);
+        }
+
 
         Category saveCategory = categoryRepo.save ( category );
         if(ObjectUtils.isEmpty ( saveCategory )){
             return false;
         }
         return true;
+    }
+
+    //Update-Category-Method
+    private void updateCategory(Category category) {
+        Optional<Category> findById = categoryRepo.findById ( category.getId () );
+        if (findById.isPresent ()){
+            Category existCategory = findById.get ();
+            category.setCreatedBy ( existCategory.getCreatedBy () );
+            category.setIsDeleted ( existCategory.getIsDeleted () );
+
+            category.setUpdatedOn ( new Date () );
+            category.setUpdatedBy ( 1 );
+        }
     }
 
     @Override
