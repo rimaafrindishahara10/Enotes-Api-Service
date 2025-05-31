@@ -8,11 +8,11 @@ import java.util.List;
 
 public interface CategoryService {
 
-    public Boolean saveCategory(CategoryDto categoryDto);
+    public Boolean saveCategory(CategoryDto categoryDto) throws Exception;
     public List<CategoryDto> getAllCategory();
     public List<ActiveCategory> getALlActiveCategory();
 
-    CategoryDto getByCategoryId(Integer id);
+    CategoryDto getByCategoryId(Integer id) throws Exception;
 
     Boolean deleteCategoryById(Integer id);
 }

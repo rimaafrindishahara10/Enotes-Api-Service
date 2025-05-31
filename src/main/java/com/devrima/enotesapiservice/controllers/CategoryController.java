@@ -2,13 +2,16 @@ package com.devrima.enotesapiservice.controllers;
 
 import com.devrima.enotesapiservice.dto.ActiveCategory;
 import com.devrima.enotesapiservice.dto.CategoryDto;
+import com.devrima.enotesapiservice.exception.ResourceNotFoundException;
 import com.devrima.enotesapiservice.models.Category;
 import com.devrima.enotesapiservice.services.impl.CategoryServiceImpl;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.Controller;
 
 import java.util.Collections;
 import java.util.List;
@@ -25,7 +28,7 @@ public class CategoryController {
 
     //Post-Mapping
     @PostMapping("/save-category")
-    public ResponseEntity<?> saveCategory(@RequestBody CategoryDto categoryDto){
+    public ResponseEntity<?> saveCategory(@RequestBody CategoryDto categoryDto) throws Exception {
         Boolean saveCategory = categoryService.saveCategory ( categoryDto );
         if(saveCategory){
             return new ResponseEntity<> ( "Category Created Successfully", HttpStatus.CREATED );
@@ -60,12 +63,13 @@ public class CategoryController {
 
     //GetById-Category
     @GetMapping("/{id}")
-    public ResponseEntity<?> getByCategoryId(@PathVariable Integer id){
+    public ResponseEntity<?> getByCategoryId(@PathVariable Integer id) throws ResourceNotFoundException {
 
          CategoryDto categoryDto = categoryService.getByCategoryId(id);
          if (ObjectUtils.isEmpty ( categoryDto )){
-             return new ResponseEntity<> ( "Category not found by id : "+id,HttpStatus.NOT_FOUND  );
+             return new ResponseEntity<> ( "NOT Found: "+id,HttpStatus.NOT_FOUND  );
          }
+
          return new ResponseEntity<> ( categoryDto,HttpStatus.OK );
 
 

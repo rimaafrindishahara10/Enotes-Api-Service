@@ -6,11 +6,14 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface CategoryRepo extends JpaRepository<Category,Integer> {
     public List<Category> findByIsActiveTrueAndIsDeletedFalse();
-    Category findByIdAndIsDeletedFalse(Integer id);
+    Optional< Category> findByIdAndIsDeletedFalse(Integer id);
 
     List<Category> findAllByIsDeletedFalse();
+
+    Boolean existsByNameAndIsDeletedFalse(String name);
 }
