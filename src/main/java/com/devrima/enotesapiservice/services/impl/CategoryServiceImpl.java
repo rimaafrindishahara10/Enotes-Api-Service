@@ -2,6 +2,7 @@ package com.devrima.enotesapiservice.services.impl;
 
 import com.devrima.enotesapiservice.dto.ActiveCategory;
 import com.devrima.enotesapiservice.dto.CategoryDto;
+import com.devrima.enotesapiservice.exception.ExistNameException;
 import com.devrima.enotesapiservice.exception.ResourceNotFoundException;
 import com.devrima.enotesapiservice.models.Category;
 import com.devrima.enotesapiservice.repositories.CategoryRepo;
@@ -38,9 +39,9 @@ public class CategoryServiceImpl implements CategoryService {
         else {
             updateCategory(category);
         }
-        Boolean categoryCheck= categoryRepo.existsByNameAndIsDeletedFalse (category.getName ());
+        Boolean categoryCheck= categoryRepo.existsByNameAndIsDeletedFalse (category.getName ().trim ());
         if (categoryCheck){
-            throw new IllegalAccessException ("This Category name is already exist in your software");
+            throw new ExistNameException ("This Category name is already exist in your software");
         }
 
         Category saveCategory = categoryRepo.save ( category );

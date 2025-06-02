@@ -22,5 +22,10 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<> ( e.getMessage (), HttpStatus.NOT_FOUND );
     }
 
+    @ExceptionHandler(ExistNameException.class)
+    public ResponseEntity<?> handlerExistNameException(ExistNameException e){
+        log.error ( "GlobalExceptionHandler :: handlerExistNameException",e.getMessage () );
+        return new ResponseEntity<> ( e.getMessage (),HttpStatus.CONFLICT );
+    }
 
 }
