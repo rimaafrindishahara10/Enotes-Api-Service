@@ -1,8 +1,11 @@
 package com.devrima.enotesapiservice;
 
+import com.devrima.enotesapiservice.config.AuditAwareConfig;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
+@EnableJpaAuditing(auditorAwareRef = "auditorAware")
 @SpringBootApplication
 public class EnotesApiServiceApplication {
 
