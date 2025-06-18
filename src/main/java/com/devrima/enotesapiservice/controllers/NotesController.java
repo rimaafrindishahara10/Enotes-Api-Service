@@ -4,12 +4,15 @@ import com.devrima.enotesapiservice.dto.NotesDto;
 import com.devrima.enotesapiservice.exception.ResourceNotFoundException;
 import com.devrima.enotesapiservice.services.impl.NotesServiceImpl;
 import com.devrima.enotesapiservice.util.CommonUtil;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -23,8 +26,8 @@ public class NotesController {
 
     //Save-API
     @PostMapping("save")
-    public ResponseEntity<?> saveNotes(@RequestBody NotesDto notesDto ) throws ResourceNotFoundException {
-        Boolean saveNote = notesService.saveNotes ( notesDto );
+    public ResponseEntity<?> saveNotes(@RequestParam String notes , @RequestParam(required = false) MultipartFile file) throws ResourceNotFoundException, IOException {
+        Boolean saveNote = notesService.saveNotes ( notes,file );
         if (saveNote ){
           return   CommonUtil.createBuildResponseMessage ( "Notes has been created successfully", HttpStatus.CREATED );
         }

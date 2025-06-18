@@ -15,8 +15,17 @@ public class NotesDto {
     private Date createdOn;
     private Integer updatedBy;
     private Date updatedOn;
+    private FileDetailsDto fileDetails;
 
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class FileDetailsDto{
+        private Integer id;
+        private String originalFileName;
+        private String displayFileName;
 
+    }
 
     @Data
     @NoArgsConstructor
