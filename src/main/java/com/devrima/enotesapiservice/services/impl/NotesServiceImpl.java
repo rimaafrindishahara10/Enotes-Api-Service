@@ -15,14 +15,15 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
+import org.springframework.util.StreamUtils;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -128,5 +129,20 @@ public class NotesServiceImpl implements NotesService {
         List<Notes> allNotes = notesRepo.findAll ();
         return allNotes.stream ().map ( notes -> mapper.map ( notes, NotesDto.class ) ).toList ();
 
+    }
+
+    @Override
+    public byte[] getDownloadFile(FileDetails fileDetails) throws IOException {
+        InputStream fileInputStream = new FileInputStream ( fileDetails.getFilePath () );
+
+        return StreamUtils.copyToByteArray ( fileInputStream );
+    }
+
+    //Get the file wit Id;
+    @Override
+    public FileDetails getFileDetails(Integer id) throws ResourceNotFoundException {
+        FileDetails fileDetails = fileDetailsRepo.findById ( id ).orElseThrow (()-> new ResourceNotFoundException ( "File Not Found by id "+id ));
+
+        return  fileDetails;
     }
 }
