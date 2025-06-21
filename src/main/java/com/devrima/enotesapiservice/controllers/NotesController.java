@@ -1,6 +1,7 @@
 package com.devrima.enotesapiservice.controllers;
 
 import com.devrima.enotesapiservice.dto.NotesDto;
+import com.devrima.enotesapiservice.dto.NotesResponse;
 import com.devrima.enotesapiservice.exception.ResourceNotFoundException;
 import com.devrima.enotesapiservice.models.FileDetails;
 import com.devrima.enotesapiservice.services.impl.NotesServiceImpl;
@@ -17,6 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.Collection;
 import java.util.List;
 
 @RestController
@@ -41,12 +43,13 @@ public class NotesController {
 
     //Get-All-Notes-> API
     @GetMapping()
-    public ResponseEntity<?> getAllNotes(){
-        List<NotesDto> allNotes = notesService.getAllNotes ();
-        if (CollectionUtils.isEmpty ( allNotes )){
-            return  ResponseEntity.noContent ().build ();
-        }
-        return CommonUtil.createBuildResponse ( "Get All notes successfully",allNotes,HttpStatus.OK );
+    public ResponseEntity<?> getAllNotesByUser(@RequestParam(defaultValue = "0") Integer pageNo, @RequestParam(defaultValue = "10") Integer pageSize ){
+        Integer userId = 3;
+        NotesResponse notesResponse= notesService.getAllNotesByUser (userId,pageNo,pageSize);
+//        if (CollectionUtils.isEmpty ( (Collection<?>) notesResponse )){
+//            return  ResponseEntity.noContent ().build ();
+//        }
+        return CommonUtil.createBuildResponse ( "Get All notes successfully",notesResponse,HttpStatus.OK );
 
     }
 
@@ -65,5 +68,8 @@ public class NotesController {
 
 
     }
+
+
+
 
 }
