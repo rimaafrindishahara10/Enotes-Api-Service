@@ -1,6 +1,7 @@
 package com.devrima.enotesapiservice.services;
 
 import com.devrima.enotesapiservice.dto.NotesDto;
+import com.devrima.enotesapiservice.dto.NotesResponse;
 import com.devrima.enotesapiservice.exception.ResourceNotFoundException;
 import com.devrima.enotesapiservice.models.FileDetails;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -16,9 +17,11 @@ public interface NotesService {
     Boolean saveNotes(String notes, MultipartFile file) throws ResourceNotFoundException, IOException;
 
     //Get-All-Notes
-    List<NotesDto> getAllNotes();
+//    List<NotesDto> getAllNotes();
 
     FileDetails getFileDetails(Integer id) throws ResourceNotFoundException;
 
     byte[] getDownloadFile(FileDetails fileDetails) throws IOException;
+    //Get-All-Notes-By-User
+    NotesResponse getAllNotesByUser(Integer userId, Integer pageNo, Integer pageSize);
 }

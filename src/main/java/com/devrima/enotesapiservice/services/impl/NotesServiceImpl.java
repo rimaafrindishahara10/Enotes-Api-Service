@@ -1,6 +1,7 @@
 package com.devrima.enotesapiservice.services.impl;
 
 import com.devrima.enotesapiservice.dto.NotesDto;
+import com.devrima.enotesapiservice.dto.NotesResponse;
 import com.devrima.enotesapiservice.exception.ResourceNotFoundException;
 import com.devrima.enotesapiservice.models.FileDetails;
 import com.devrima.enotesapiservice.models.Notes;
@@ -8,11 +9,13 @@ import com.devrima.enotesapiservice.repositories.CategoryRepo;
 import com.devrima.enotesapiservice.repositories.FileDetailsRepo;
 import com.devrima.enotesapiservice.repositories.NotesRepo;
 import com.devrima.enotesapiservice.services.NotesService;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.io.FilenameUtils;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StreamUtils;
@@ -25,6 +28,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Stream;
 
 @Service
 public class NotesServiceImpl implements NotesService {
@@ -125,9 +129,21 @@ public class NotesServiceImpl implements NotesService {
     }
 
     @Override
-    public List<NotesDto> getAllNotes() {
-        List<Notes> allNotes = notesRepo.findAll ();
-        return allNotes.stream ().map ( notes -> mapper.map ( notes, NotesDto.class ) ).toList ();
+    public NotesResponse getAllNotesByUser(Integer userId,Integer pageNo, Integer pageSize) {
+        Pageable pageable = PageRequest.of ( pageNo,pageSize );
+        Page<Notes> pageNotes = notesRepo.findByCreatedBy (userId,pageable);
+
+        List<NotesDto> notesDto = pageNotes.get ().map ( notes -> mapper.map ( notes, NotesDto.class ) ).toList ();
+        NotesResponse notesResponse = NotesResponse.builder ()
+                .notes ( notesDto )
+                .pageNo ( pageNotes.getNumber () )
+                .pageSize ( pageNotes.getSize () )
+                .totalElements ( pageNotes.getTotalElements () )
+                .totalPages ( pageNotes.getTotalPages () )
+                .isFirst ( pageNotes.isFirst () )
+                .isLast ( pageNotes.isLast () )
+                .build ();
+            return notesResponse;
 
     }
 
@@ -145,4 +161,6 @@ public class NotesServiceImpl implements NotesService {
 
         return  fileDetails;
     }
+
+
 }
