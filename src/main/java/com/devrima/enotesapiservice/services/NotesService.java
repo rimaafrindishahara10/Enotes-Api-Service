@@ -24,4 +24,10 @@ public interface NotesService {
     byte[] getDownloadFile(FileDetails fileDetails) throws IOException;
     //Get-All-Notes-By-User
     NotesResponse getAllNotesByUser(Integer userId, Integer pageNo, Integer pageSize);
+
+    void softDeleteNotes(Integer id) throws ResourceNotFoundException;
+
+    void restoreDeleteNotes(Integer id) throws ResourceNotFoundException;
+
+    List<NotesDto> recycleBinUserById(Integer userId);
 }

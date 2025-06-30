@@ -16,6 +16,8 @@ public class NotesDto {
     private Integer updatedBy;
     private Date updatedOn;
     private FileDetailsDto fileDetails;
+    private Boolean isDeleted;
+    private Date deleteOn;
 
     @Data
     @NoArgsConstructor
