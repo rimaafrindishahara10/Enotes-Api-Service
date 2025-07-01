@@ -24,11 +24,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
-import java.util.stream.Stream;
+import java.util.*;
 
 @Service
 public class NotesServiceImpl implements NotesService {
@@ -53,6 +49,8 @@ public class NotesServiceImpl implements NotesService {
 
         ObjectMapper ob = new ObjectMapper ();
         NotesDto notesDto = ob.readValue ( notes, NotesDto.class );
+        notesDto.setIsDeleted(false);
+        notesDto.setDeleteOn ( null );
         checkCategoryIsExist(notesDto.getCategory ());
         Notes notesMap = mapper.map ( notesDto, Notes.class );
         FileDetails fileDetails= saveFileDetails(file);
@@ -146,7 +144,7 @@ public class NotesServiceImpl implements NotesService {
     @Override
     public NotesResponse getAllNotesByUser(Integer userId,Integer pageNo, Integer pageSize) {
         Pageable pageable = PageRequest.of ( pageNo,pageSize );
-        Page<Notes> pageNotes = notesRepo.findByCreatedBy (userId,pageable);
+        Page<Notes> pageNotes = notesRepo.findByCreatedByAndIsDeletedFalse (userId,pageable);
 
         List<NotesDto> notesDto = pageNotes.get ().map ( notes -> mapper.map ( notes, NotesDto.class ) ).toList ();
         NotesResponse notesResponse = NotesResponse.builder ()
@@ -159,6 +157,34 @@ public class NotesServiceImpl implements NotesService {
                 .isLast ( pageNotes.isLast () )
                 .build ();
             return notesResponse;
+
+    }
+    //DELETE-NOTES->API
+    @Override
+    public void softDeleteNotes(Integer id) throws ResourceNotFoundException {
+        Notes notes = notesRepo.findById ( id ).orElseThrow ( () -> new ResourceNotFoundException ( "Notes not found by this is" + id ) );
+        notes.setIsDeleted ( true );
+        notes.setDeleteOn ( new Date () );
+        notesRepo.save ( notes );
+
+    }
+
+    //RESTORE-DELETE-NOTES->API
+    @Override
+    public void restoreDeleteNotes(Integer id) throws ResourceNotFoundException {
+        Notes notes = notesRepo.findById ( id ).orElseThrow ( () -> new ResourceNotFoundException ( "Notes not found by id" + id ) );
+        notes.setIsDeleted ( false );
+        notes.setDeleteOn ( null );
+        notesRepo.save ( notes );
+    }
+
+    //RECYCLE-BIN-DELETED-NOTES
+
+    @Override
+    public List<NotesDto> recycleBinUserById(Integer userId) {
+        List<Notes> notes= notesRepo.findByCreatedByAndIsDeletedTrue (userId );
+        List<NotesDto> notesDtoList= notes.stream ().map ( note->mapper.map ( note,NotesDto.class ) ).toList ();
+        return notesDtoList;
 
     }
 

@@ -69,6 +69,31 @@ public class NotesController {
 
     }
 
+    //DELETE-NOTES->API
+    @GetMapping("delete/{id}")
+    public ResponseEntity<?> softDeleteNotes(@PathVariable Integer id) throws ResourceNotFoundException {
+        notesService.softDeleteNotes(id);
+        return CommonUtil.createBuildResponseMessage ( "Notes deleted successfully",HttpStatus.OK );
+
+    }
+
+    //RESTORE-DELETE-NOTES->API
+    @GetMapping("restore/{id}")
+    public ResponseEntity<?> restoreDeleteNotes(@PathVariable Integer id) throws ResourceNotFoundException {
+        notesService.restoreDeleteNotes(id);
+        return CommonUtil.createBuildResponseMessage ( "!! Deleted data restore successfully !!",HttpStatus.OK );
+    }
+    //RECYCLE-BIN-NOTES->API
+    @GetMapping("recycle-bin")
+    public ResponseEntity<?> restoreDeleteNotes() throws ResourceNotFoundException {
+        Integer userId = 3;
+        List<NotesDto> notesDtoList= notesService.recycleBinUserById(userId);
+        if (CollectionUtils.isEmpty (  notesDtoList)){
+            return CommonUtil.createBuildResponseMessage ( "There are no any deleted notes",HttpStatus.OK );
+        }
+        return CommonUtil.createBuildResponse ("We get all deleted notes at recycle-bin" ,notesDtoList,HttpStatus.OK );
+    }
+
 
 
 

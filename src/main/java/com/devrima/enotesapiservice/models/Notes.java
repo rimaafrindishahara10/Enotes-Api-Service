@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import java.util.Date;
+
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
@@ -19,5 +21,8 @@ public class Notes extends BaseModel {
     private Category category;
     @ManyToOne
     private FileDetails fileDetails;
+    private Boolean isDeleted;
+    private Date deleteOn;
+
 
 }
