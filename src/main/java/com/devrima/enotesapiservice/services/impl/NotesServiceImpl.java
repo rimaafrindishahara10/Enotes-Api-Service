@@ -57,10 +57,16 @@ public class NotesServiceImpl implements NotesService {
         Notes notesMap = mapper.map ( notesDto, Notes.class );
         FileDetails fileDetails= saveFileDetails(file);
 
+        if(!ObjectUtils.isEmpty ( notesDto.getId () )){
+            updateNotes(notesDto,file);
+        }
+
         if(!ObjectUtils.isEmpty ( fileDetails )){
             notesMap.setFileDetails ( fileDetails );
         }else {
-            notesMap.setFileDetails ( null );
+            if(ObjectUtils.isEmpty ( notesDto.getId () )) {
+                notesMap.setFileDetails ( null );
+            }
         }
 
         Notes saveNotes = notesRepo.save ( notesMap );
@@ -68,6 +74,15 @@ public class NotesServiceImpl implements NotesService {
             return true;
         }
         return false;
+    }
+    //UPDATE-NOTES-METHOD
+    private void updateNotes(NotesDto notesDto, MultipartFile file) throws ResourceNotFoundException {
+        Notes existsNotes = notesRepo.findById ( notesDto.getId () ).orElseThrow ( () -> new ResourceNotFoundException ( "We don't found this user by this id" + notesDto.getId () ));
+
+        if(!ObjectUtils.isEmpty ( file )){
+            notesDto.setFileDetails ( mapper.map ( existsNotes.getFileDetails (), NotesDto.FileDetailsDto.class ) );
+        }
+
     }
 
     //SAVE -FILE-Details
